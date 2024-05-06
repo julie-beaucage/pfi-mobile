@@ -6,6 +6,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import HomeScreen from './pages/home';
 import BoutiqueScreen from './pages/boutique';
 import CartScreen from './pages/panier';
+import ProductList from './pages/listeProduit';
+import { ConnectionPage, SignUpPage } from './pages/connexion'
 import { Stack } from './App';
 
 const Tab = createBottomTabNavigator();
@@ -14,6 +16,10 @@ export default function App() {
   return (
     <NavigationContainer>
       <Tab.Navigator>
+        <Tab.Screen name="Connect" component={ConnectionPage} />
+        <Tab.Screen name="Register" component={SignUpPage} />
+        <Tab.Screen name="ListeProduits" component={ProductList}
+          options={{ tabBarIcon: ({ focused }) => <Ionicons name="productList" size={24} color={focused ? "blue" : "lightblue"} /> }}/>
         <Tab.Screen name="Home" component={HomeScreen} 
           options={{ tabBarIcon: ({ focused }) => <Ionicons name="home" size={24} color={focused ? "blue" : "lightblue"} /> }} />
         <Tab.Screen name="Cart" component={CartScreen}
