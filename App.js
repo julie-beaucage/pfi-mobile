@@ -7,19 +7,39 @@ import HomeScreen from './pages/home';
 import BoutiqueScreen from './pages/boutique';
 import CartScreen from './pages/panier';
 import ProductList from './pages/listeProduit';
-import { ConnectionPage, SignUpPage } from './pages/connexion'
-import { Stack } from './App';
+import { ConnectionPage, SignUpPage, DBRegister, DBConnect } from './pages/connexion'
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createUsersTable } from './pages/bd';
 
+const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 export default function App() {
+  createUsersTable();
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name='Connection' component={ConnectionPage} />
+        <Stack.Screen name="Register" component={SignUpPage} />
+        <Stack.Screen name="dbConnexion" component={DBConnect} />
+        <Stack.Screen name="dbEnregistement" component={DBRegister} />
+        <Stack.Screen name='tabNav' component={TabNavigator} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+
+const TabNavigator = () => {
+  if(admin){
+    //return navigation for admin
+  }else{
+    //return normal navigation
+  }
   return (
     <NavigationContainer>
       <Tab.Navigator>
-        <Tab.Screen name="Connect" component={ConnectionPage} />
-        <Tab.Screen name="Register" component={SignUpPage} />
         <Tab.Screen name="ListeProduits" component={ProductList}
-          options={{ tabBarIcon: ({ focused }) => <Ionicons name="productList" size={24} color={focused ? "blue" : "lightblue"} /> }}/>
+          options={{ tabBarIcon: ({ focused }) => <Ionicons name="storefront" size={24} color={focused ? "blue" : "lightblue"} /> }}/>
         <Tab.Screen name="Home" component={HomeScreen} 
           options={{ tabBarIcon: ({ focused }) => <Ionicons name="home" size={24} color={focused ? "blue" : "lightblue"} /> }} />
         <Tab.Screen name="Cart" component={CartScreen}

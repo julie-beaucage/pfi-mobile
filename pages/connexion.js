@@ -1,21 +1,94 @@
-const ConnectionPage = ({ navigation }) => {
-    return (
-      <View>
-        <TextInput placeholder='Nom' />
-        <TextInput placeholder='Mots de passe'></TextInput>
-        <Button title='Connecter' onPress={() => navigation.navigate('ListeProduit') /*Change*/}/>
-        <Button title='Vous enregistrer?' onPress={() => navigation.navigate('Enregistrement')} />
-      </View>
-    );
-  }
+import { View , TextInput, Button} from 'react-native'
+import { useEffect, useState } from 'react';
+import dbPfi from './bd'
+
+export const ConnectionPage = ({ navigation }) => {
+  const [nom, setNom] = useState("");
+  const [mdp, setMdp] = useState("");
   
-  const SignUpPage = ({ navigation }) => {
-    return(
-      <View>
-        <TextInput placeholder='Nom' />
-        <TextInput placeholder='Mots de passe'></TextInput>
-        <Button title='Enregistrer'/>
-        <Button title="Vous connecter?" onPress={() => navigation.navigate('Connection')} />
-      </View>
-    );
+  return (
+    <View>
+      <TextInput placeholder='Nom' value={nom} onChangeText={n => setNom(n)}/>
+      <TextInput placeholder='Mots de passe' value={mdp} onChangeText={m => setMdp(m)}/>
+      <Button title='Connecter' onPress={() => navigation.navigate("dbConnexion", {Nom: nom, Mdp: mdp})}/>
+      <Button title='Vous enregistrer?' onPress={() => navigation.navigate('Register')} />
+    </View>
+  );
+}
+  
+export const SignUpPage = ({ navigation }) => {
+  const [nom, setNom] = useState("");
+  const [mdp, setMdp] = useState("");
+  return(
+    <View>
+      <TextInput placeholder='Nom' value={nom} onChangeText={n => setNom(n)}/>
+      <TextInput placeholder='Mots de passe' value={mdp} onChangeText={m => setMdp(m)}/>
+      <Button title='Enregistrer' onPress={() => navigation.navigate("dbEnregistement", {Nom: nom, Mdp: mdp})}/>
+      <Button title="Vous connecter?" onPress={() => navigation.navigate('Connection')} />
+    </View>
+  );
+}
+
+export const DBConnect = ({ navigation, route }) =>{
+  const [users, setUsers] = useState([]);
+  const {Nom, Mdp} = route.params;
+
+  try {
+    dbPfi.transaction(tx => {
+       tx.executeSql("SELECT * from users", [],
+        (_, { rows: { _array } }) => {
+          console.log("select ", JSON.stringify(_array));
+          setUsers(_array);
+          console.log(users)
+        }); 
+    })
+  } catch (error) {
+    console.log(error);
   }
+
+  console.log(users)
+
+  users.map((user)=> {
+    if(user.nom == Nom && user.mdp == Mdp){
+      Console.log("ENTRÉ!!!!!")
+      navigation.navigate("tabNav") //passer en params si est admin
+    }
+  });
+  console.log("REFUSER!!!!")
+
+  navigation.navigate("Connection") //(optionel) passer en params pour montrer a l'usager l'erreur de connection
+}
+
+export const DBRegister = ({navigation, route}) => {
+  const {Nom, Mdp} = route.params;
+  const usersInsert = (nom, mdp) => {
+    try {
+      dbPfi.transaction(tx => {
+        tx.executeSql("INSERT INTO users (nom, mdp, admin) VALUES (?,?,?);", [nom, mdp, 0], null, 
+        (_, error) => console.error('Erreur lors de l\'ajout du user:', error))
+      })
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  const Exists = (nom) => {     
+    try {
+      return dbPfi.transaction(tx => {
+        return tx.executeSql("SELECT * from users", [],
+          (_, { rows: { _array } }) => {
+            console.log("select ", JSON.stringify(_array));
+            _array.map((user => {if(user.nom == nom) return true }));
+            return false;
+          }); 
+      })
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  if(Exists(Nom)) navigation.navigate("Connection") // maybe show a msg to notify userr
+
+  usersInsert(Nom, Mdp);
+
+  navigation.navigate("Connection")
+}

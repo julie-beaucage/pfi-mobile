@@ -1,4 +1,4 @@
-const ProductList = ({ navigation }) => {
+  const ProductList = ({ navigation }) => {
     //get product list from db
     const Data = [{id: 0, nom: "test", description: "testtest", prix: "2.00$", image: "#"}];
     return(<FlatList data={Data} renderItem={renderProduct} keyExtractor={p => p.id}/>);
@@ -17,3 +17,4 @@ const ProductList = ({ navigation }) => {
       </View>
     );
   }
+export default ProductList

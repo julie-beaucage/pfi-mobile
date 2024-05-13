@@ -7,7 +7,7 @@ import SnackBar from 'react-native-snackbar-component'
 import { NavigationContainer } from '@react-navigation/native';
 import * as SQLite from 'expo-sqlite';
 import { Ionicons } from '@expo/vector-icons';
-import dbPfi, { RemplirTableProduits } from '.pages/bd';
+import dbPfi, { RemplirTableProduits } from './bd';
 
 const Stack = createNativeStackNavigator();
 

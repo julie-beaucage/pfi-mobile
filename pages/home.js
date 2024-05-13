@@ -31,7 +31,7 @@ const HomeScreen = ({ navigation }) => {
             onPress={() =>
               navigation.navigate('SettingsStack', { screen: 'Settings' })
             }>
-            <Text>Go to settng Tab</Text>
+            <Text>Go to setting Tab</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.button}
