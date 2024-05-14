@@ -29,17 +29,20 @@ export default function App() {
   );
 }
 
-const TabNavigator = () => {
-  if(admin){
-    //return navigation for admin
-  }else{
-    //return normal navigation
-  }
-  return (
-    <NavigationContainer>
+const TabNavigator = ({navigation, route}) => {
+  const {admin} = route.params;
+  if(admin == 1){
+    return (
       <Tab.Navigator>
+        <Tab.Screen name="Home" component={HomeScreen} 
+          options={{ tabBarIcon: ({ focused }) => <Ionicons name="home" size={24} color={focused ? "blue" : "lightblue"} /> }} />
         <Tab.Screen name="ListeProduits" component={ProductList}
-          options={{ tabBarIcon: ({ focused }) => <Ionicons name="storefront" size={24} color={focused ? "blue" : "lightblue"} /> }}/>
+          options={{ tabBarIcon: ({ focused }) => <Ionicons name="storefront" size={24} color={focused ? "blue" : "lightblue"} />, headerShown: false  }}/>
+      </Tab.Navigator>
+    );
+  }else{
+    return (
+      <Tab.Navigator>
         <Tab.Screen name="Home" component={HomeScreen} 
           options={{ tabBarIcon: ({ focused }) => <Ionicons name="home" size={24} color={focused ? "blue" : "lightblue"} /> }} />
         <Tab.Screen name="Cart" component={CartScreen}
@@ -47,8 +50,8 @@ const TabNavigator = () => {
         <Tab.Screen name="Boutique" component={BoutiqueScreen}
           options={{ tabBarIcon: ({ focused }) => <Ionicons name="storefront" size={24} color={focused ? "blue" : "lightblue"} />, headerShown: false }} />
       </Tab.Navigator>
-    </NavigationContainer>
-  );
+    );
+  }
 }
 
 const SearchScreen = () => <View><Text>Search screen</Text></View>

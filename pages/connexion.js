@@ -1,5 +1,5 @@
 import { View , TextInput, Button} from 'react-native'
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import dbPfi from './bd'
 
 export const ConnectionPage = ({ navigation }) => {
@@ -33,30 +33,33 @@ export const DBConnect = ({ navigation, route }) =>{
   const [users, setUsers] = useState([]);
   const {Nom, Mdp} = route.params;
 
-  try {
-    dbPfi.transaction(tx => {
-       tx.executeSql("SELECT * from users", [],
-        (_, { rows: { _array } }) => {
-          console.log("select ", JSON.stringify(_array));
-          setUsers(_array);
-          console.log(users)
+  const selectAll = () => {
+    return new Promise((resolve, reject) => {
+      dbPfi.transaction(tx => {
+        tx.executeSql("SELECT * from users", [],
+         (_, { rows: { _array } }) => {
+           console.log("select ", JSON.stringify(_array));
+           resolve(_array)
+        },
+        (error) => {
+          reject(error);
         }); 
-    })
-  } catch (error) {
-    console.log(error);
-  }
+     });
+    });
+  };
 
+  selectAll()
+    .then((Users)=>{ setUsers(Users) })
+    .catch((err)=>{console.log(err)})
   console.log(users)
 
   users.map((user)=> {
     if(user.nom == Nom && user.mdp == Mdp){
-      Console.log("ENTRÉ!!!!!")
-      navigation.navigate("tabNav") //passer en params si est admin
+      navigation.navigate("tabNav", {admin: user.admin})
     }
   });
-  console.log("REFUSER!!!!")
 
-  navigation.navigate("Connection") //(optionel) passer en params pour montrer a l'usager l'erreur de connection
+  navigation.navigate("Connection") //(optionel) passer en params pour montrer a l'usager l'erreur de connection  
 }
 
 export const DBRegister = ({navigation, route}) => {
