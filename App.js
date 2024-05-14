@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{ useState, createContext,useContext }  from 'react';
 import { StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
@@ -6,26 +6,36 @@ import { NavigationContainer } from '@react-navigation/native';
 import HomeScreen from './pages/home';
 import BoutiqueScreen from './pages/boutique';
 import CartScreen from './pages/panier';
-import { Stack } from './App';
+import { PanierContext } from './pages/global';
+import {I18n} from 'i18n-js';
 
 const Tab = createBottomTabNavigator();
 
 export default function App() {
+  const [panier, setPanier] = useState([]);
   return (
+    <PanierContext.Provider value={{ panier, setPanier }}>
     <NavigationContainer>
       <Tab.Navigator>
         <Tab.Screen name="Home" component={HomeScreen} 
           options={{ tabBarIcon: ({ focused }) => <Ionicons name="home" size={24} color={focused ? "blue" : "lightblue"} /> }} />
-        <Tab.Screen name="Cart" component={CartScreen}
-          options={{ tabBarIcon: ({ focused }) => <Ionicons name="cart" size={24} color={focused ? "blue" : "lightblue"} /> }} />
+  <Tab.Screen
+    name="Cart"
+    component={CartScreen}
+    options={{
+      tabBarIcon: ({ focused }) => {
+        return <Ionicons name="cart" size={24} color={focused ? "blue" : "lightblue"} />;
+      }
+    }}
+  />
         <Tab.Screen name="Boutique" component={BoutiqueScreen}
           options={{ tabBarIcon: ({ focused }) => <Ionicons name="storefront" size={24} color={focused ? "blue" : "lightblue"} />, headerShown: false }} />
       </Tab.Navigator>
     </NavigationContainer>
+    </PanierContext.Provider>
+
   );
 }
-
-const SearchScreen = () => <View><Text>Search screen</Text></View>
 
 const styles = StyleSheet.create({
   container: {

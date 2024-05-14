@@ -4,12 +4,48 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { LinearGradient } from 'expo-linear-gradient';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SnackBar from 'react-native-snackbar-component'
+import someAudioFile from '../sons/point.mp3';
 import { NavigationContainer } from '@react-navigation/native';
 import * as SQLite from 'expo-sqlite';
+import { Audio } from 'expo-av';
 import { Ionicons } from '@expo/vector-icons';
-import dbPfi, { RemplirTableProduits } from '.pages/bd';
+
+//import { RemplirTableProduits } from './Bd';
+import { usePanierContext } from './global';
 
 const Stack = createNativeStackNavigator();
+
+const dbPfi = SQLite.openDatabase("pfi2.db");
+
+
+
+  dbPfi.transaction(tx => {
+    tx.executeSql(
+      'CREATE TABLE IF NOT EXISTS produits (id INTEGER PRIMARY KEY AUTOINCREMENT, nom TEXT, description TEXT, prix INTEGER, image TEXT);',
+      [],
+      () => console.log('Table produits créée avec succès'),
+      error => console.error('Erreur lors de la création de la table produits:', error)
+    );
+  });
+
+
+
+  dbPfi.transaction(tx => {
+    tx.executeSql('DELETE FROM produits;', [], () => {
+      tx.executeSql(
+        `INSERT INTO produits (nom, description, prix, image) VALUES (?, ?, ?, ?);`,
+        ["Miriam le chat petit gâteau", "Cette peluche ultra-compressible est fabriquée avec des matériaux de haute qualité et ultra-doux. Ajoutez cette adorable peluche à votre collection Squishmallows. Cet objet de collection est parfait pour les fans de Squishmallows de tous âges. La peluche douce est parfaite pour se blottir tout en se relaxant à la maison, en regardant un film, pendant les longs trajets en voiture, les soirées pyjama, les trajets en avion et pour s'amuser à l'ancienne !",  16.99, "https://www.toysrus.ca/dw/image/v2/BDFX_PRD/on/demandware.static/-/Sites-toys-master-catalog/default/dw9a00bdc6/images/4446E8A5_1.jpg"],
+        null,
+        (_, error) => console.error('Erreur lors de l\'ajout du produit:', error)
+      );
+      tx.executeSql(
+        `INSERT INTO produits (nom, description, prix, image) VALUES (?, ?, ?, ?);`,
+        ["Monica l'axolotl violet", "Cette peluche ultra-compressible est fabriquée avec des matériaux de haute qualité et ultra-doux. Ajoutez cette adorable peluche à votre collection Squishmallows. Cet objet de collection est parfait pour les fans de Squishmallows de tous âges. La peluche douce est parfaite pour se blottir tout en se relaxant à la maison, en regardant un film, pendant les longs trajets en voiture, les soirées pyjama, les trajets en avion et pour s'amuser à l'ancienne !", 16.99, "https://www.toysrus.ca/dw/image/v2/BDFX_PRD/on/demandware.static/-/Sites-toys-master-catalog/default/dwaae6cde1/images/F4BFAA1F_1.jpg"],
+        null,
+        (_, error) => console.error('Erreur lors de l\'ajout du produit:', error)
+      );
+    });
+  });
 
 const ProduitPic = (props) => {
   const DessertDefaut = "https://i0.wp.com/breezybakes.com/wp-content/uploads/2015/03/gluten-free-vanilla-cake-with-raspberry-filling.jpg ";
@@ -18,7 +54,6 @@ const ProduitPic = (props) => {
 }
 
 const PressableProduit = ({ nom, image, prix, onPress }) => {
-  console.log(nom);
   return (
     <Pressable
       onPress={onPress}
@@ -43,22 +78,18 @@ const PressableProduit = ({ nom, image, prix, onPress }) => {
 const ProduitScreen = ({ navigation }) => {
   const [produits, setProduits] = useState([]);
 
-  const selectAll = () => {     
-    try {
-      dbPfi.transaction(tx => {
-        tx.executeSql("SELECT * from produits", [],
-          (_, { rows: { _array } }) => {
-            console.log("select ", JSON.stringify(_array));
-            setProduits(_array);
-          }); 
-      })
-    } catch (error) {
-      console.log(error);
-    }
+  const selectAll = () => {   
+    dbPfi.transaction(tx => {
+      tx.executeSql("SELECT * from produits", [], (_, { rows: { _array } }) => {
+        //console.log("select ", JSON.stringify(_array));
+        setProduits(_array);
+      },
+      (_, error) => {
+        console.log("Erreur lors de l'exécution de la requête SQL :", error);
+      }); 
+    });
   }
-
   useEffect(() => {
-    RemplirTableProduits();
     selectAll();
   }, []);
 
@@ -70,7 +101,7 @@ const ProduitScreen = ({ navigation }) => {
         colors={['#FBD3E9', '#BB377D']}
           style={stylesBoutique.linearGradientBackground}
         >
-          <Text style={stylesBoutique.appName}>Squismallow Dream</Text>
+          <Text style={stylesBoutique.appName}>Squismallow Dreams</Text>
         </LinearGradient>
       )}
       renderItem={({ item }) => (
@@ -88,6 +119,21 @@ const ProduitScreen = ({ navigation }) => {
 };
 const ProduitDetailsScreen = ({ route,AjouterPanier }) => {
   const { produitSelected } = route.params;
+  const [sound, setSound] = useState();
+  async function playSound() {
+    try {
+      console.log('Loading Sound');
+      const { sound } = await Audio.Sound.createAsync(
+        require("../sons/point.mp3")
+      );
+      setSound(sound);
+      console.log('Sound loaded successfully');
+      await sound.playAsync();
+      console.log('Sound played successfully');
+    } catch (error) {
+      console.log('Error while playing sound:', error);
+    }
+  }
 
   return (
     <View style={stylesBoutique.produitDetailContainer}>
@@ -97,20 +143,30 @@ const ProduitDetailsScreen = ({ route,AjouterPanier }) => {
       <Text style={stylesBoutique.nomDetail}>{produitSelected.nom}</Text>
       <Text style={stylesBoutique.prixDetail}>{produitSelected.prix} $</Text>
       <Text style={stylesBoutique.descriptionDetail}>{produitSelected.description}</Text>
-      <Button title="Ajouter au panier" onPress={() => {AjouterPanier(produitSelected )}} />
+      <Button title="Ajouter au panier" onPress={playSound} />
     </View>
   );
 };
 
 const Tab = createBottomTabNavigator();
-export let listProduitDansPanier = [];
 
 export default function BoutiqueScreen() {
   const [snackBarVisible, setSnackBarVisible] = useState(false);
+  const { panier, setPanier } = usePanierContext(); 
   const AjouterPanier = (product) => {
-    listProduitDansPanier =([...listProduitDansPanier, product]);
+    const index = panier.findIndex(item => item.id === product.id);
+  
+    if (index !== -1) {
+      const nouveauPanier = [...panier];
+      nouveauPanier[index].quantite += 1;
+      setPanier(nouveauPanier);
+    } else {
+      setPanier(prevState => [...prevState, { ...product, quantite: 1 }]);
+    }
+  
     setSnackBarVisible(true);
   };
+
   return (
     <View style={{ flex: 1 }}>
     <SnackBar
