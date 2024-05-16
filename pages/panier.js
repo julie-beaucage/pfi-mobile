@@ -10,9 +10,8 @@ import {
   Button,
   FlatList,
 } from "react-native";
-//import boutique, { listProduitDansPanier } from './boutique';
-//import { AfficherPanier } from './boutique';
 import { usePanierContext } from "./global";
+import i18n from "../translagion";
 
 const ProduitPics = (props) => {
   const DessertDefaut =
@@ -20,61 +19,62 @@ const ProduitPics = (props) => {
   let pic = props.uriPic ? props.uriPic : DessertDefaut;
   return <Image style={stylesPanier.imagePanier} source={{ uri: pic }} />;
 };
-
-
 const CartItem = ({ item, addToCart, removeFromCart }) => {
   return (
     <View style={stylesPanier.containerItem}>
-      <View style={stylesPanier.itemInfo}>
-        <ProduitPics uriPic={item.image} />
-        <View style={stylesPanier.itemDetails}>
-          <Text>{item.nom}</Text>
-          <Text>{item.prix}$</Text>
+      <View>
+        <View style={stylesPanier.itemInfo}>
+          <ProduitPics uriPic={item.image} />
+          <View style={stylesPanier.itemDetails}>
+            <Text style ={stylesPanier.panierText}>{item.nom}</Text>
+            <Text style ={stylesPanier.panierText} >{item.prix}$</Text>
+          </View>
+        </View>
+        <View>
+          <View style={stylesPanier.itemControls}>
+            <TouchableOpacity
+              style={stylesPanier.buttonQuantite}
+              onPress={() => addToCart(item)}
+            >
+              <Text style={stylesPanier.buttonText}>+</Text>
+            </TouchableOpacity>
+            <Text style ={stylesPanier.panierText}>{item.quantite}x</Text>
+            <TouchableOpacity
+              style={stylesPanier.buttonQuantite}
+              onPress={() => removeFromCart(item)}
+            >
+              <Text style={stylesPanier.buttonText}>-</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
-      <View style={stylesPanier.itemControls}>
-        
-        <TouchableOpacity
-          style={stylesPanier.buttonQuantite}
-          onPress={() => addToCart(item)}
-        >
-          <Text style={stylesPanier.buttonText}>+</Text>
-        </TouchableOpacity>
-        <Text>{item.quantite}x</Text>
-        <TouchableOpacity
-          style={stylesPanier.buttonQuantite}
-          onPress={() => removeFromCart(item)}
-        >
-          <Text style={stylesPanier.buttonText}>-</Text>
-        </TouchableOpacity>
-      </View>
-      <Text style={stylesPanier.itemTotal}>{getTotalPriceForItem(item)}$</Text>
+
+      <Text style={stylesPanier.itemTotal}>{prixTotalParItem(item)}$</Text>
     </View>
   );
 };
 
-const getTotalPriceForItem = (item) => {
+const prixTotalParItem = (item) => {
   return (item.prix * item.quantite).toFixed(2);
 };
-
-
 
 const CartScreen = ({ navigation }) => {
   const { panier, setPanier } = usePanierContext();
 
-  /*
-  const getTotalQuantity = () => {
-    const quantities = {};
-    panier.forEach((item) => {
-      if (quantities[item.id]) {
-        quantities[item.id]++;
-      } else {
-        quantities[item.id] = 1;
-      }
-    });
-    return quantities;
-  };*/
+  const viderPanier = () => {
+    setPanier([]);
+  };
 
+  const CalculerTaxe = (subtotal) => {
+    const TPS = 0.05;
+    const TVQ = 0.09975;
+    const tps = subtotal * TPS;
+    const tvq = subtotal * TVQ;
+    const tpsRounded = tps.toFixed(2);
+    const tvqRounded = tvq.toFixed(2);
+    const result = parseFloat(tpsRounded) + parseFloat(tvqRounded);
+    return result.toFixed(2);
+  };
   const addToCart = (product) => {
     const index = panier.findIndex((item) => item.id === product.id);
 
@@ -103,43 +103,39 @@ const CartScreen = ({ navigation }) => {
       setPanier(newCart);
     }
   };
-  /*
-  const getTotalPrice = () => {
+
+  const getSousTotal = () => {
     if (!panier || panier.length === 0) {
       return 0;
     }
     const totalPrice = panier.reduce((total, item) => {
-      console.log("Item:", item);
-      console.log("Total:", total);
-      console.log("Total Price for Item:", getTotalPriceForItem(item));
-      return total + getTotalPriceForItem(item);
-    }, 0);
-    console.log("Total Price:", totalPrice);
-    return totalPrice !== undefined ? totalPrice.toFixed(2) : 0;
-
-  };*/
-  const getTotalPriceForItem = (item) => {
-    return (item.prix * item.quantite).toFixed(2);
-  };
-
-  const getTotalPrice = () => {
-    if (!panier || panier.length === 0) {
-      return 0;
-    }
-    const totalPrice = panier.reduce((total, item) => {
-      const priceForItem = getTotalPriceForItem(item);
+      const priceForItem = prixTotalParItem(item);
       return total + parseFloat(priceForItem);
     }, 0);
     return totalPrice !== undefined ? totalPrice.toFixed(2) : 0;
   };
 
- // console.log("panier : ", JSON.stringify(panier));
+  const getTotal = () => {
+    let result = 0;
+    const subtotal = getSousTotal();
+    const taxes = CalculerTaxe(subtotal);
+    result = parseFloat(subtotal) + parseFloat(taxes);
+    result = parseFloat(result.toFixed(2));
+    return result;
+  };
+
+  const handleOrder = () => {
+    const totalAmount = getTotal();
+    navigation.navigate("OrderConfirmation", { totalAmount });
+    viderPanier();
+  };
 
   return (
-    <View>
-      <Text>Votre panier :</Text>
+    <View style={stylesPanier.panierContainer}>
+      <Text style={stylesPanier.panierTitre}>{i18n.t("panier")}</Text>
       <FlatList
         data={panier}
+        style={{ backgroundColor:"#ffc0cb"}}
         renderItem={({ item }) => (
           <CartItem
             item={item}
@@ -147,30 +143,39 @@ const CartScreen = ({ navigation }) => {
             removeFromCart={removeFromCart}
           />
         )}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => (item.id ? item.id.toString() : "")}
       />
-      <Text>Total: {getTotalPrice()}$</Text>
-      <Button
-        title="Passez la commande"
-        onPress={() => {
-          /* Logique pour passer la commande */
-        }}
-      />
+      <Text style={{ color: "#ff1493", fontSize: 35 }}>{i18n.t("resumerPanier")}</Text>
+      <View style={stylesPanier.totauxContaier}>
+        <Text style ={stylesPanier.panierText}>{i18n.t("sousTotal")}: {getSousTotal()}$ </Text>
+        <Text style ={stylesPanier.panierText}>{i18n.t("tax")}{CalculerTaxe(getSousTotal())}$</Text>
+        <Text style ={stylesPanier.panierText}>{i18n.t("total")}: {getTotal()}$</Text>
+      </View>
+      <Button title={i18n.t("buttonCommand")} onPress={handleOrder} />
+      <Button title={i18n.t("buttonClear")} onPress={viderPanier} color="red" />
     </View>
   );
 };
 
-
 const stylesPanier = StyleSheet.create({
+  panierContainer: {
+    backgroundColor: "#98fb98",
+    flex: 1,
+  },
+  panierTitre: {
+    fontSize: 30,
+    color: "#ff1493"
+  },
   containerItem: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 20,
+    marginTop: 10,
     padding: 10,
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 5,
+    backgroundColor: "#d8bfd8",
   },
   itemInfo: {
     flexDirection: "row",
@@ -180,7 +185,9 @@ const stylesPanier = StyleSheet.create({
     marginLeft: 10,
   },
   itemTotal: {
-    marginTop: 5, 
+    marginTop: 5,
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   button: {
     alignItems: "center",
@@ -194,6 +201,10 @@ const stylesPanier = StyleSheet.create({
     height: 100,
     borderRadius: 5,
   },
+ panierText:{
+  fontSize: 18,
+  fontWeight: 'bold',
+ },
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -201,7 +212,7 @@ const stylesPanier = StyleSheet.create({
     marginTop: 8,
   },
   itemControls: {
-    flexDirection: "row", 
+    flexDirection: "row",
     alignItems: "center",
   },
   buttonQuantite: {
@@ -215,6 +226,10 @@ const stylesPanier = StyleSheet.create({
   },
   buttonTextQuatite: {
     fontSize: 20,
+  },
+  totauxContaier: {
+   borderTopColor:"#ff1493",
+   borderTopWidth:2
   },
 });
 export default CartScreen;
