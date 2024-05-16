@@ -29,11 +29,10 @@ const ProductList = ({ navigation }) => {
 
   useEffect(() => {
     RemplirTableProduits();
+    selectAll()
+      .then((Produits) => setProduits(Produits))
+      .catch((err) => console.log(err));
   }, []);
-
-  selectAll()
-    .then((Produits) => setProduits(Produits))
-    .catch((err) => console.log(err));
 
   return(
   <View>
@@ -110,7 +109,7 @@ const Delete = (id) => {
 const Add = (nom, desc, prix, img) => {
   try{
     dbPfi.transaction(tx => {
-      tx.executeSql("INSERT INTO produits (nom, description, prix, image)", [nom, desc, prix, img], null,
+      tx.executeSql("INSERT INTO produits (nom, description, prix, image) VALUES(?,?,?,?);", [nom, desc, prix, img], null,
       (_, error) => console.error('Erreur lors de l\'ajout du produit:', error));
     });
   }catch(err){

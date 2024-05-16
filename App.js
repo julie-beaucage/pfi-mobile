@@ -10,6 +10,7 @@ import ProductList from './pages/listeProduit';
 import { ConnectionPage, SignUpPage, DBRegister, DBConnect } from './pages/connexion'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createUsersTable } from './pages/bd';
+import { MapScreen } from './pages/map';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -21,8 +22,6 @@ export default function App() {
       <Stack.Navigator>
         <Stack.Screen name='Connection' component={ConnectionPage} />
         <Stack.Screen name="Register" component={SignUpPage} />
-        <Stack.Screen name="dbConnexion" component={DBConnect} />
-        <Stack.Screen name="dbEnregistement" component={DBRegister} />
         <Stack.Screen name='tabNav' component={TabNavigator} />
       </Stack.Navigator>
     </NavigationContainer>
@@ -36,6 +35,7 @@ const TabNavigator = ({navigation, route}) => {
       <Tab.Navigator>
         <Tab.Screen name="Home" component={HomeScreen} 
           options={{ tabBarIcon: ({ focused }) => <Ionicons name="home" size={24} color={focused ? "blue" : "lightblue"} /> }} />
+        <Tab.Screen name='Map' component={MapScreen}/>
         <Tab.Screen name="ListeProduits" component={ProductList}
           options={{ tabBarIcon: ({ focused }) => <Ionicons name="storefront" size={24} color={focused ? "blue" : "lightblue"} />, headerShown: false  }}/>
       </Tab.Navigator>
