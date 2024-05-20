@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
@@ -16,8 +16,10 @@ const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 export default function App() {
-  createUsersTable();
-  AddAdmin();
+  useEffect(() => {
+    createUsersTable();
+    AddAdmin();
+  }, [])
   return (
     <NavigationContainer>
       <Stack.Navigator>

@@ -46,7 +46,7 @@ export const RemplirTableProduits = () => {
 };
 export const AddAdmin = () => {
   dbPfi.transaction(tx => {
-    tx.executeSql('DELETE FROM produits;', [], () =>{
+    tx.executeSql('DELETE FROM users;', [], () =>{
       tx.executeSql("INSERT INTO users (nom, mdp, admin) VALUES(?,?,?);", ["Admin", "12345", 1], null, 
       (_, error) => console.error('Erreur lors de l\'ajout de l\'admin:', error));
     });
