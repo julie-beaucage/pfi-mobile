@@ -9,7 +9,7 @@ import CartScreen from './pages/panier';
 import ProductList from './pages/listeProduit';
 import { ConnectionPage, SignUpPage, DBRegister, DBConnect } from './pages/connexion'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createUsersTable } from './pages/bd';
+import { AddAdmin, createUsersTable } from './pages/bd';
 import { MapScreen } from './pages/map';
 
 const Stack = createNativeStackNavigator();
@@ -17,6 +17,7 @@ const Tab = createBottomTabNavigator();
 
 export default function App() {
   createUsersTable();
+  AddAdmin();
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -35,7 +36,8 @@ const TabNavigator = ({navigation, route}) => {
       <Tab.Navigator>
         <Tab.Screen name="Home" component={HomeScreen} 
           options={{ tabBarIcon: ({ focused }) => <Ionicons name="home" size={24} color={focused ? "blue" : "lightblue"} /> }} />
-        <Tab.Screen name='Map' component={MapScreen}/>
+        <Tab.Screen name='Map' component={MapScreen}
+          options={{ tabBarIcon: ({ focused }) => <Ionicons name="map" size={24} color={focused ? "blue" : "lightblue"} /> }} />
         <Tab.Screen name="ListeProduits" component={ProductList}
           options={{ tabBarIcon: ({ focused }) => <Ionicons name="storefront" size={24} color={focused ? "blue" : "lightblue"} />, headerShown: false  }}/>
       </Tab.Navigator>

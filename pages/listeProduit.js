@@ -17,7 +17,7 @@ const ProductList = ({ navigation }) => {
       dbPfi.transaction(tx => {
         tx.executeSql("SELECT * from produits", [],
           (_, { rows: { _array } }) => {
-            console.log("select ", JSON.stringify(_array));
+            //console.log("select ", JSON.stringify(_array));
             resolve(_array)
         },
         (error) => {
@@ -32,7 +32,7 @@ const ProductList = ({ navigation }) => {
     selectAll()
       .then((Produits) => setProduits(Produits))
       .catch((err) => console.log(err));
-  }, []);
+  });
 
   return(
   <View>
@@ -57,6 +57,16 @@ const ProductList = ({ navigation }) => {
 const renderProduct = ({item}) => (<Product id={item.id} nom={item.nom} prix={item.prix} image={item.image}
                                             onPress={() => navigation.navigate('ProduitDetailsScreen', { produitSelected: item })}/>);
 const Product = ({id, nom, prix, image, onPress }) => {
+  const Delete = (id) => {
+    try{
+      dbPfi.transaction(tx => {
+        tx.executeSql("DELETE FROM produits WHERE id = " + id, [], null,
+        (_, error) => console.error('Erreur lors de la supression du produit:', error));
+      });
+    }catch(err){
+      console.log(err);
+    }
+  }
   return(
     <Pressable onPress={onPress}
     pressRetentionOffset={{ bottom: 10, left: 10, right: 10, top: 10 }}
@@ -83,6 +93,17 @@ const AddForm = () => {
   const [prix, setPrix] = useState("");
   const [img, setImg] = useState("");
 
+  function Add(nom, desc, prix, img){
+    try{
+      dbPfi.transaction(tx => {
+        tx.executeSql("INSERT INTO produits (nom, description, prix, image) VALUES(?,?,?,?);", [nom, desc, prix, img], null,
+        (_, error) => console.error('Erreur lors de l\'ajout du produit:', error));
+      });
+    }catch(err){
+      console.log(err);
+    }
+  }
+
   //may change how to get img from user
   return(
     <View>
@@ -93,28 +114,6 @@ const AddForm = () => {
       <Pressable style={stylesBoutique.addPressable} onPress={() => Add(nom, desc, prix, img)}><Text>Add</Text></Pressable>
     </View>
   );
-}
-
-const Delete = (id) => {
-  try{
-    dbPfi.transaction(tx => {
-      tx.executeSql("DELETE FROM produits WHERE id = " + id, [], null,
-      (_, error) => console.error('Erreur lors de la supression du produit:', error));
-    });
-  }catch(err){
-    console.log(err);
-  }
-}
-
-const Add = (nom, desc, prix, img) => {
-  try{
-    dbPfi.transaction(tx => {
-      tx.executeSql("INSERT INTO produits (nom, description, prix, image) VALUES(?,?,?,?);", [nom, desc, prix, img], null,
-      (_, error) => console.error('Erreur lors de l\'ajout du produit:', error));
-    });
-  }catch(err){
-    console.log(err);
-  }
 }
 
 const stylesBoutique = {

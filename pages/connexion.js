@@ -1,6 +1,6 @@
 import { View , TextInput, Button} from 'react-native'
 import { useEffect, useState } from 'react';
-import dbPfi from './bd'
+import dbPfi, { AddAdmin } from './bd';
 
 export const ConnectionPage = ({ navigation }) => {
   const [nom, setNom] = useState("");

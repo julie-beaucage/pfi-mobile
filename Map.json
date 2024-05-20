@@ -1,0 +1,17 @@
+{
+    "entrepot1":{"latitude":45.642700, "longitude": -73.8300000},
+    "entrepot2":{"latitude":45.642800, "longitude": -73.8500000},
+    "entrepot3":{"latitude":45.642900, "longitude": -73.8600000},
+    "ligneBleu":[
+        {"latitude": 45.6428144, "longitude": -73.8453732},
+        {"latitude": 45.6427000, "longitude": -73.8456000},
+        {"latitude": 45.6413500, "longitude": -73.8436500},
+        {"latitude": 45.6408700, "longitude": -73.8446000},
+        {"latitude": 45.6406800, "longitude": -73.8464000},
+        {"latitude": 45.6408500, "longitude": -73.8472600},
+        {"latitude": 45.6409800, "longitude": -73.8472600},
+        {"latitude": 45.6423200, "longitude": -73.8492000},
+        {"latitude": 45.6422900, "longitude": -73.8501500},
+        {"latitude": 45.642800, "longitude": -73.8500000}
+    ]
+}
