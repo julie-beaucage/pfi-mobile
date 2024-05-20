@@ -1,6 +1,6 @@
 import * as SQLite from 'expo-sqlite';
 
-export default SQLite.openDatabase('pfi.db');
+export default dbPfi = SQLite.openDatabase('pfi.db');
 
 export const createProduitsTable = () => {
   dbPfi.transaction(tx => {
@@ -12,6 +12,17 @@ export const createProduitsTable = () => {
     );
   });
 };
+export const createUsersTable = () => {
+  dbPfi.transaction(tx => {
+    tx.executeSql(
+      'CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, nom TEXT, mdp TEXT, admin INTEGER);',
+      [],
+      () => console.log('Table users créée avec succès'),
+      error => console.error('Erreur lors de la création de la table users:', error)
+    );
+  });
+};
+
 
 createProduitsTable();
 
@@ -33,3 +44,11 @@ export const RemplirTableProduits = () => {
     });
   });
 };
+export const AddAdmin = () => {
+  dbPfi.transaction(tx => {
+    tx.executeSql('DELETE FROM produits;', [], () =>{
+      tx.executeSql("INSERT INTO users (nom, mdp, admin) VALUES(?,?,?);", ["Admin", "12345", 1], null, 
+      (_, error) => console.error('Erreur lors de l\'ajout de l\'admin:', error));
+    });
+  });
+}
