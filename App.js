@@ -31,12 +31,14 @@ export default function App() {
                   color={focused ? "#ff1493" : "#90ee90"}
                 />
               ),
+              headerShown: false,
             }}
           />
           <Tab.Screen
             name="Cart"
             component={CartStack}
             options={{
+              tabBarLabel: i18n.t("cart"),
               tabBarIcon: ({ focused }) => {
                 return (
                   <Ionicons

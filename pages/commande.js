@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, Button } from "react-native";
+import { View, Text, StyleSheet, Button,Image } from "react-native";
 import i18n from "../translagion";
 
 const OrderConfirmationScreen = ({ route, navigation }) => {
@@ -7,6 +7,10 @@ const OrderConfirmationScreen = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
+        <Image
+        source={require("../images/thank.png")}
+         style={styles.logo}
+        />
       <Text style={styles.message}>
         Votre commande a été effectuée. Le montant de {totalAmount}$ a été prélevé.
       </Text>
@@ -24,11 +28,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
+    backgroundColor:'pink'
   },
   message: {
     fontSize: 18,
     textAlign: "center",
     marginBottom: 20,
+  },
+  logo: {
+    width: 400,
+    height: 200,
+    resizeMode: "contain",
   },
 });
 

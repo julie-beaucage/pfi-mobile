@@ -106,7 +106,7 @@ const PressableProduit = ({ nom, image, prix, onPress,id }) => {
         <View style={stylesBoutique.produitContainer}>
           <ProduitPic uriPic={image} />
           <View style={stylesBoutique.produitInfo}>
-            <Text style={stylesBoutique.produitNom}>{i18n.t(`products.${id}.Nom`)}</Text>
+            <Text style={stylesBoutique.produitNom}>{nom}</Text>
             <Text style={stylesBoutique.produitPrix}>{prix}$</Text>
           </View>
         </View>
@@ -196,12 +196,13 @@ const ProduitDetailsScreen = ({ route,AjouterPanier }) => {
       <View tyle={stylesBoutique.detailImageContainer}>
         <Image style={stylesBoutique.imageDetail} source={{ uri: produitSelected.image }} />
       </View>
-      <Text style={stylesBoutique.nomDetail}>{i18n.t(`products.${idProduitSelecteed}.Nom`)}</Text>
+      <Text style={stylesBoutique.nomDetail}>{produitSelected.nom}</Text>
       <Text style={stylesBoutique.prixDetail}>{produitSelected.prix} $</Text>
-      <Text style={stylesBoutique.descriptionDetail}>{i18n.t(`products.${idProduitSelecteed}.description`)}</Text>
-      <Button title={i18n.t("addCart")}  onPress={() => { 
+      <Text style={stylesBoutique.descriptionDetail}>{produitSelected.description}</Text>
+      <Button title={i18n.t("addCart")} color="#f08080"  onPress={() => { 
         //playSound(); 
-        AjouterPanier(produitSelected); }} />
+        AjouterPanier(produitSelected);
+        }} />
     </View>
   );
 };
@@ -209,11 +210,12 @@ const ProduitDetailsScreen = ({ route,AjouterPanier }) => {
 const Tab = createBottomTabNavigator();
 
 export default function BoutiqueScreen() {
+  console.log("BoutiqueScreenLog");
   const [snackBarVisible, setSnackBarVisible] = useState(false);
+  const [snackBarMessage, setSnackBarMessage] = useState("");
   const { panier, setPanier } = usePanierContext(); 
+ 
   const AjouterPanier = (product) => {
-    //console.log("produit ajouter au panier : ", JSON.stringify(product));
-
     const index = panier.findIndex(item => item.id === product.id);
     if (index !== -1) {
       const nouveauPanier = [...panier];
@@ -222,25 +224,31 @@ export default function BoutiqueScreen() {
     } else {
       setPanier(prevState => [...prevState, { ...product, quantite: 1 }]);
     }
-  
+    setSnackBarMessage(`SquishMallow ${product.nom} a été ajouté au panier`); 
     setSnackBarVisible(true);
-    console.log("panier : ", JSON.stringify(panier));
   };
+  useEffect(() => {
+    if (snackBarVisible) {
+      const timer = setTimeout(() => {
+        setSnackBarVisible(false);
+      }, 3000); 
 
+      return () => clearTimeout(timer);
+    }
+  }, [snackBarVisible]);
   return (
     <View style={{ flex: 1 , backgroundColor:"#ffc0cb"}}>
     <SnackBar
       visible={snackBarVisible}
-      textMessage="Item ajouté au panier"
+      textMessage={snackBarMessage}
       autoHidingTime={3000}
       backgroundColor="#333"
       accentColor="#FFD700"
-      onHide={() => setSnackBarVisible(false)}
     />
     <Stack.Navigator initialRouteName="BoutiqueScreen">
       <Stack.Screen name="Produit" component={ProduitScreen} options={{ headerShown: false }} />
       <Stack.Screen name="ProduitDetailsScreen" options={({ route }) => ({ title: i18n.t("return") })}>
-          {(props) => <ProduitDetailsScreen {...props} AjouterPanier={AjouterPanier} />}
+          {(props) => <ProduitDetailsScreen {...props} AjouterPanier={AjouterPanier}setSnackBarVisible={setSnackBarVisible}/>}
       </Stack.Screen>
     </Stack.Navigator>
     </View>
