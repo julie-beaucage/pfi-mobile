@@ -86,6 +86,7 @@ const HomeScreen = ({ navigation }) => {
               <Ionicons name="logo-instagram"size={24}color={"#90ee90"}margin={4} />
             </View>
           </View>
+
         </View>
       </ScrollView>
     </SafeAreaView>

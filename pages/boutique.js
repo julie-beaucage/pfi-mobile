@@ -14,6 +14,7 @@ import i18n from "../translagion";
 //import { RemplirTableProduits } from './Bd';
 import { usePanierContext } from './global';
 
+
 const Stack = createNativeStackNavigator();
 
 const db = SQLite.openDatabase("pfi.db");
