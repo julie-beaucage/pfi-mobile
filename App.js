@@ -1,15 +1,19 @@
-import React, { useEffect } from 'react';
-import { StyleSheet } from 'react-native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Ionicons } from '@expo/vector-icons';
-import { NavigationContainer } from '@react-navigation/native';
-import HomeScreen from './pages/home';
-import BoutiqueScreen from './pages/boutique';
-import CartScreen from './pages/panier';
+import React, { useState, createContext, useContext } from "react";
+import { StyleSheet } from "react-native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Ionicons } from "@expo/vector-icons";
+import { NavigationContainer } from "@react-navigation/native";
+import HomeScreen from "./pages/home";
+import BoutiqueScreen from "./pages/boutique";
+import CartScreen from "./pages/panier";
+import { PanierContext } from "./pages/global";
+import i18n from "./translagion";
+import CartStack from "./pages/stackPanier";
+//import { I18n } from "i18n-js";
 import ProductList from './pages/listeProduit';
 import { ConnectionPage, SignUpPage, DBRegister, DBConnect } from './pages/connexion'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { AddAdmin, createUsersTable, RemplirTableProduits } from './pages/bd';
+import { AddAdmin, createUsersTable } from './pages/bd';
 import { MapScreen } from './pages/map';
 
 const Stack = createNativeStackNavigator();
@@ -31,7 +35,6 @@ export default function App() {
     </NavigationContainer>
   );
 }
-
 const TabNavigator = ({navigation, route}) => {
   const {admin} = route.params;
   if(admin == 1){
@@ -59,40 +62,40 @@ const TabNavigator = ({navigation, route}) => {
   }
 }
 
-const SearchScreen = () => <View><Text>Search screen</Text></View>
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
   appName: {
     marginTop: 35,
     fontSize: 30,
-    color: 'white',
-    backgroundColor: '#38f',
-    width: '100%',
-    height: 'auto'
+    color: "white",
+    backgroundColor: "#38f",
+    width: "100%",
+    height: "auto",
   },
   produitContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    borderBottomColor: "#ccc",
   },
   produitInfo: {
     marginLeft: 10,
   },
   produitNom: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   produitPrix: {
     fontSize: 16,
-    color: 'green',
+    color: "green",
   },
   image: {
     width: 100,

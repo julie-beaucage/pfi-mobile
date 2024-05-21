@@ -72,7 +72,7 @@ const Product = ({id, nom, prix, image, onPress }) => {
     style={({ pressed }) => [
       { backgroundColor: pressed ? "pink" : stylesBoutique.cruiseLineContainer }
     ]}>
-    {({ pressed }) => (
+    {({ pressed }) => 
       <View style={stylesBoutique.produitContainer}>
         <ProduitPic uriPic={image} />
         <View style={stylesBoutique.produitInfo}>
@@ -85,7 +85,6 @@ const Product = ({id, nom, prix, image, onPress }) => {
   </Pressable>
   );
 }
-
 const AddForm = () => {
   const [nom, setNom] = useState("");
   const [desc, setDesc] = useState("");
@@ -102,7 +101,6 @@ const AddForm = () => {
       console.log(err);
     }
   }
-
   //may change how to get img from user
   return(
     <View>
