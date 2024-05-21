@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
@@ -9,16 +9,18 @@ import CartScreen from './pages/panier';
 import ProductList from './pages/listeProduit';
 import { ConnectionPage, SignUpPage, DBRegister, DBConnect } from './pages/connexion'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { AddAdmin, createUsersTable } from './pages/bd';
+import { AddAdmin, createUsersTable, RemplirTableProduits } from './pages/bd';
 import { MapScreen } from './pages/map';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 export default function App() {
-  createUsersTable();
-  AddAdmin();
-  RemplirTableProduits();
+  useEffect(()=> {
+    createUsersTable();
+    AddAdmin();
+    RemplirTableProduits();
+  },[])
   return (
     <NavigationContainer>
       <Stack.Navigator>
