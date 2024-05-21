@@ -18,6 +18,7 @@ const Tab = createBottomTabNavigator();
 export default function App() {
   createUsersTable();
   AddAdmin();
+  RemplirTableProduits();
   return (
     <NavigationContainer>
       <Stack.Navigator>

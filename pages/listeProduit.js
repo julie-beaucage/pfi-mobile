@@ -28,7 +28,6 @@ const ProductList = ({ navigation }) => {
   };
 
   useEffect(() => {
-    RemplirTableProduits();
     selectAll()
       .then((Produits) => setProduits(Produits))
       .catch((err) => console.log(err));
