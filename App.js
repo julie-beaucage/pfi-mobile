@@ -1,4 +1,3 @@
-
 import React, { useState, createContext, useContext } from "react";
 import { StyleSheet } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -17,11 +16,25 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AddAdmin, createUsersTable } from './pages/bd';
 import { MapScreen } from './pages/map';
 
-
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 export default function App() {
+  useEffect(()=> {
+    createUsersTable();
+    AddAdmin();
+    RemplirTableProduits();
+  },[])
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name='Connection' component={ConnectionPage} />
+        <Stack.Screen name="Register" component={SignUpPage} />
+        <Stack.Screen name='tabNav' component={TabNavigator} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
 const TabNavigator = ({navigation, route}) => {
   const {admin} = route.params;
   if(admin == 1){
@@ -47,6 +60,7 @@ const TabNavigator = ({navigation, route}) => {
       </Tab.Navigator>
     );
   }
+}
 
 }
 

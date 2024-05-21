@@ -1,4 +1,3 @@
-
 import * as SQLite from "expo-sqlite"
 /*
 export default SQLite.openDatabase('pfi.db');
@@ -7,7 +6,6 @@ const dbPfi = SQLite.openDatabase("pfi.db");
 import * as SQLite from 'expo-sqlite';
 
 export default dbPfi = SQLite.openDatabase('pfi.db');
-
 
 export const createProduitsTable = () => {
   dbPfi.transaction(tx => {
@@ -51,8 +49,6 @@ export const RemplirTableProduits = () => {
     });
   });
 };
-
-
 RemplirTableProduits();
 /*
 export default SQLite.openDatabase("pfi.db");

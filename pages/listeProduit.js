@@ -28,11 +28,10 @@ const ProductList = ({ navigation }) => {
   };
 
   useEffect(() => {
-    RemplirTableProduits();
     selectAll()
       .then((Produits) => setProduits(Produits))
       .catch((err) => console.log(err));
-  },[]);
+  });
 
   return(
   <View>
@@ -54,21 +53,26 @@ const ProductList = ({ navigation }) => {
   );
 }
   
-const renderProduct = ({item}) => (<Product id={item.id} nom={item.nom} prix={item.prix} image={item.image}/>);
-
-function Delete(id) {
-  try{
-    dbPfi.transaction(tx => {
-      tx.executeSql("DELETE FROM produits WHERE id = " + id, [], null,
-      (_, error) => console.error('Erreur lors de la supression du produit:', error));
-    });
-  }catch(err){
-    console.log(err);
+const renderProduct = ({item}) => (<Product id={item.id} nom={item.nom} prix={item.prix} image={item.image}
+                                            onPress={() => navigation.navigate('ProduitDetailsScreen', { produitSelected: item })}/>);
+const Product = ({id, nom, prix, image, onPress }) => {
+  const Delete = (id) => {
+    try{
+      dbPfi.transaction(tx => {
+        tx.executeSql("DELETE FROM produits WHERE id = " + id, [], null,
+        (_, error) => console.error('Erreur lors de la supression du produit:', error));
+      });
+    }catch(err){
+      console.log(err);
+    }
   }
-}
-
-const Product = ({id, nom, prix, image}) => {
   return(
+    <Pressable onPress={onPress}
+    pressRetentionOffset={{ bottom: 10, left: 10, right: 10, top: 10 }}
+    style={({ pressed }) => [
+      { backgroundColor: pressed ? "pink" : stylesBoutique.cruiseLineContainer }
+    ]}>
+    {({ pressed }) => 
       <View style={stylesBoutique.produitContainer}>
         <ProduitPic uriPic={image} />
         <View style={stylesBoutique.produitInfo}>
@@ -77,26 +81,26 @@ const Product = ({id, nom, prix, image}) => {
         </View>
         <Pressable style={stylesBoutique.deletePerssable} onPress={() => Delete(id)}><Text>Delete</Text></Pressable>
       </View>
+    )}
+  </Pressable>
   );
 }
-
-function Add(nom, desc, prix, img){
-  try{
-    dbPfi.transaction(tx => {
-      tx.executeSql("INSERT INTO produits (nom, description, prix, image) VALUES(?,?,?,?);", [nom, desc, prix, img], null,
-      (_, error) => console.error('Erreur lors de l\'ajout du produit:', error));
-    });
-  }catch(err){
-    console.log(err);
-  }
-}
-
 const AddForm = () => {
   const [nom, setNom] = useState("");
   const [desc, setDesc] = useState("");
   const [prix, setPrix] = useState("");
   const [img, setImg] = useState("");
 
+  function Add(nom, desc, prix, img){
+    try{
+      dbPfi.transaction(tx => {
+        tx.executeSql("INSERT INTO produits (nom, description, prix, image) VALUES(?,?,?,?);", [nom, desc, prix, img], null,
+        (_, error) => console.error('Erreur lors de l\'ajout du produit:', error));
+      });
+    }catch(err){
+      console.log(err);
+    }
+  }
   //may change how to get img from user
   return(
     <View>

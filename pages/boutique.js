@@ -9,11 +9,11 @@ import { NavigationContainer } from '@react-navigation/native';
 import * as SQLite from 'expo-sqlite';
 import { Audio } from 'expo-av';
 import { Ionicons } from '@expo/vector-icons';
+import dbPfi, { RemplirTableProduits } from './bd';
 import i18n from "../translagion";
 
 //import { RemplirTableProduits } from './Bd';
 import { usePanierContext } from './global';
-
 
 const Stack = createNativeStackNavigator();
 
