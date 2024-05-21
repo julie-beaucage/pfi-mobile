@@ -21,9 +21,7 @@ const Tab = createBottomTabNavigator();
 
 export default function App() {
   useEffect(()=> {
-    createUsersTable();
     AddAdmin();
-    RemplirTableProduits();
   },[])
   return (
     <NavigationContainer>

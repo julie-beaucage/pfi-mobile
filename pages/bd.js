@@ -1,3 +1,4 @@
+
 import * as SQLite from "expo-sqlite"
 /*
 export default SQLite.openDatabase('pfi.db');
@@ -6,6 +7,7 @@ const dbPfi = SQLite.openDatabase("pfi.db");
 import * as SQLite from 'expo-sqlite';
 
 export default dbPfi = SQLite.openDatabase('pfi.db');
+
 
 export const createProduitsTable = () => {
   dbPfi.transaction(tx => {
@@ -49,6 +51,8 @@ export const RemplirTableProduits = () => {
     });
   });
 };
+
+
 RemplirTableProduits();
 /*
 export default SQLite.openDatabase("pfi.db");
@@ -65,8 +69,8 @@ export const createProduitsTable = () => {
         console.error("Erreur lors de la création de la table produits:", error)
     );
   });
-};
-/*
+};*/
+
 export const createProduitsTable = () => {
   dbPfi.transaction((tx) => {
     tx.executeSql(
@@ -99,8 +103,8 @@ export const createProduitsTable = () => {
       (_, error) => console.error("Erreur lors de l'ajout du produit:", error)
     );
   });
-};*/
-/*
+};
+
 export const createUserTable = () => {
   dbPfi.transaction(tx => {
     tx.executeSql(
@@ -110,10 +114,10 @@ export const createUserTable = () => {
       error => console.error('Erreur lors de la création de la table usager:', error)
     );
   });
-};*/
+};
 
-//createProduitsTable();
-//createUserTable();
+createProduitsTable();
+createUserTable();
 /*
 export const RemplirTableProduits = () => {
   console.log("testPaniner");
