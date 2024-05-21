@@ -24,6 +24,7 @@ export default function App() {
     AddAdmin();
   },[])
   return (
+    <PanierContext.Provider value={{ panier, setPanier }}>
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name='Connection' component={ConnectionPage} />
@@ -31,6 +32,7 @@ export default function App() {
         <Stack.Screen name='tabNav' component={TabNavigator} />
       </Stack.Navigator>
     </NavigationContainer>
+    </PanierContext.Provider>
   );
 }
 const TabNavigator = ({navigation, route}) => {
@@ -49,13 +51,52 @@ const TabNavigator = ({navigation, route}) => {
   }else{
     return (
       <Tab.Navigator>
-        <Tab.Screen name="Home" component={HomeScreen} 
-          options={{ tabBarIcon: ({ focused }) => <Ionicons name="home" size={24} color={focused ? "blue" : "lightblue"} /> }} />
-        <Tab.Screen name="Cart" component={CartScreen}
-          options={{ tabBarIcon: ({ focused }) => <Ionicons name="cart" size={24} color={focused ? "blue" : "lightblue"} /> }} />
-        <Tab.Screen name="Boutique" component={BoutiqueScreen}
-          options={{ tabBarIcon: ({ focused }) => <Ionicons name="storefront" size={24} color={focused ? "blue" : "lightblue"} />, headerShown: false }} />
-      </Tab.Navigator>
+          <Tab.Screen
+            name="Home"
+            component={HomeScreen}
+            options={{
+              tabBarLabel: i18n.t("home"),
+              tabBarIcon: ({ focused }) => (
+                <Ionicons
+                  name="home"
+                  size={24}
+                  color={focused ? "#ff1493" : "#90ee90"}
+                />
+              ),
+              headerShown: false,
+            }}
+          />
+          <Tab.Screen
+            name="Cart"
+            component={CartStack}
+            options={{
+              tabBarLabel: i18n.t("cart"),
+              tabBarIcon: ({ focused }) => {
+                return (
+                  <Ionicons
+                    name="cart"
+                    size={24}
+                    color={focused ? "#ff1493" : "#90ee90"}
+                  />
+                );
+              },
+              headerShown: false,
+            }}
+          />
+          <Tab.Screen name="Boutique" component={BoutiqueScreen}
+            options={{
+              tabBarLabel: i18n.t("shop"),
+              tabBarIcon: ({ focused }) => (
+                <Ionicons
+                  name="storefront"
+                  size={24}
+                  color={focused ? "#ff1493" : "#90ee90"}
+                />
+              ),
+              headerShown: false,
+            }}
+          />
+        </Tab.Navigator>
     );
   }
 }
