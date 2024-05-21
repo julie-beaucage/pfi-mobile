@@ -1,5 +1,4 @@
 import * as React from "react";
-import { useState, useEffect, useContext } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import {
   TouchableOpacity,
@@ -20,19 +19,20 @@ const ProduitPics = (props) => {
   let pic = props.uriPic ? props.uriPic : DessertDefaut;
   return <Image style={stylesPanier.imagePanier} source={{ uri: pic }} />;
 };
-const CartItem = ({ item, addToCart, supprimerDuPanier }) => {
+
+const CartItem = ({ item, ajouterItem,enleverItem, supprimerDuPanier }) => {
 
   const confirmDeleteItem = () => {
     Alert.alert(
-      "Supprimer l'article",
-      "Êtes-vous sûr de vouloir supprimer cet article du panier ?",
+      i18n.t("alerteTitre"),
+      i18n.t("alerteMessage"),
       [
         {
-          text: "Annuler",
+          text:   i18n.t("alerteCancer"),
           style: "cancel",
         },
         {
-          text: "Oui",
+          text: i18n.t("alerteYes"),
           onPress: () => supprimerDuPanier(item),
         },
       ]
@@ -50,29 +50,29 @@ const CartItem = ({ item, addToCart, supprimerDuPanier }) => {
           </View >
           <View style={stylesPanier.containerPrice}>
             <Text style={stylesPanier.label}>{i18n.t("total")} </Text>
-            <Text style={stylesPanier.itemTotal}>{prixTotalParItem(item)}$</Text>
+            <Text style={stylesPanier.itemTotal}>{currencyFormatter.format(prixTotalParItem(item))}</Text>
           </View>
         </View>
         <View>
-          <Text style={stylesPanier.label}>{i18n.t("quantite")}</Text>
+          <Text style={{ color:"white",marginLeft:15,fontWeight:'bold'}}>{i18n.t("quantite")}</Text>
           <View style={stylesPanier.itemControls}>
           <TouchableOpacity
               style={stylesPanier.buttonQuantite}
-              onPress={() => removeFromCart(item)}
+              onPress={() => enleverItem(item)}
             >
             <Text style={stylesPanier.buttonText}>-</Text>
             </TouchableOpacity>
             <Text style ={stylesPanier.panierText}>{item.quantite} x </Text>
             <TouchableOpacity
               style={stylesPanier.buttonQuantite}
-              onPress={() => addToCart(item)}
+              onPress={() => ajouterItem(item)}
             >
               <Text style={stylesPanier.buttonText}>+</Text>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={confirmDeleteItem} style={stylesPanier.deleteIcon}>
                <Ionicons name="trash-bin-outline" size={24} color={"white"} margin={4} />
-               <Text color={"white"} >{i18n.t("supprimer")}</Text>
+               <Text style={{ color:"white",marginTop:7}} >{i18n.t("supprimer")}</Text>
              </TouchableOpacity>
           </View>
         </View>
@@ -88,26 +88,23 @@ const prixTotalParItem = (item) => {
 
 const CartScreen = ({ navigation }) => {
   const { panier, setPanier } = usePanierContext();
-
   const viderPanier = () => {
-    setPanier([]);
+    Alert.alert(
+      i18n.t("alerteTitre2"),
+      i18n.t("alerteMessage2"),
+      [
+        {
+          text:   i18n.t("alerteCancer"),
+          style: "cancel",
+        },
+        {
+          text: i18n.t("alerteYes"),
+          onPress: () => {setPanier([]);},
+        },
+      ]
+    );
   };
-
-  const CalculerTaxe = (subtotal) => {
-    const TPS = 0.05;
-    const TVQ = 0.09975;
-  
-    const tps = subtotal * TPS;
-    const tvq = subtotal * TVQ;
-  
-    const tpsFormatted = currencyFormatter.format(tps);
-    const tvqFormatted = currencyFormatter.format(tvq);
-    const result = tps + tvq; // Somme des taxes sans formatage
-    const resultFormatted = currencyFormatter.format(result);
-    console.log(resultFormatted);
-    return resultFormatted;
-  };
-  const addToCart = (product) => {
+  const ajouterItem = (product) => {
     const index = panier.findIndex((item) => item.id === product.id);
 
     if (index !== -1) {
@@ -123,7 +120,7 @@ const CartScreen = ({ navigation }) => {
     }
   };
 
-  const removeFromCart = (product) => {
+  const enleverItem = (product) => {
     const index = panier.findIndex((item) => item.id === product.id);
     if (index !== -1) {
       const newCart = [...panier];
@@ -143,34 +140,40 @@ const CartScreen = ({ navigation }) => {
       setPanier(newCart);
     }
   };
+  const CalculerTaxe = (subtotal) => {
+    const TPS = 0.05;
+    const TVQ = 0.09975;
+    subtotal = parseFloat(subtotal); 
+    const tps = subtotal * TPS;
+    const tvq = subtotal * TVQ;
+    const result = tps + tvq;
+    return result;
+  };
 
   const getSousTotal = () => {
     if (!panier || panier.length === 0) {
-      return currencyFormatter.format(0);
+      return 0;
     }
     const totalPrice = panier.reduce((total, item) => {
       const priceForItem = prixTotalParItem(item);
-      console.log(priceForItem);
       return total + parseFloat(priceForItem);
     }, 0);
-    const totalPriceFormatted = currencyFormatter.format(totalPrice);
-  
-    return totalPriceFormatted;
+    
+    return totalPrice;
   };
+
 
   const getTotal = () => {
     const subtotal = getSousTotal();
     const taxes = CalculerTaxe(subtotal);
-  
     const result = parseFloat(subtotal) + parseFloat(taxes);
-    
     return currencyFormatter.format(result);
   };
 
   const handleOrder = () => {
     const totalAmount = getTotal();
     navigation.navigate("OrderConfirmation", { totalAmount });
-    viderPanier();
+    setPanier([]);
   };
 
   return (
@@ -178,15 +181,21 @@ const CartScreen = ({ navigation }) => {
       <View style={stylesPanier.titleContainer}>
       <Text style={stylesPanier.panierTitre}>{i18n.t("panier")}</Text>
       <Button title={i18n.t("buttonClear")} onPress={viderPanier} color="red" />
-      </View>
+      </View >
+      {panier.length === 0 ? (
+        <View style={stylesPanier.emptyContainer}>
+         <Text style={{ fontSize: 20,textAlign:'center' }}>{i18n.t("etatPanier")}</Text>
+        </View> 
+    ) : (
+      <>
       <FlatList
         data={panier}
         style={{ backgroundColor:"#ffc0cb"}}
         renderItem={({ item }) => (
           <CartItem
             item={item}
-            addToCart={addToCart}
-            removeFromCart={removeFromCart}
+            ajouterItem={ajouterItem}
+            enleverItem={enleverItem}
             supprimerDuPanier={supprimerDuPanier}
           />
         )}
@@ -194,18 +203,19 @@ const CartScreen = ({ navigation }) => {
       />
       <Text style={{ color: "#ff1493", fontSize: 35 }}>{i18n.t("resumerPanier")}</Text>
       <View style={stylesPanier.totauxContaier}>
-        <Text style ={stylesPanier.panierText}>{i18n.t("sousTotal")}: {getSousTotal()}</Text>
-        <Text style ={stylesPanier.panierText}>{i18n.t("tax")}: {CalculerTaxe(getSousTotal())}</Text>
+        <Text style ={stylesPanier.panierText}>{i18n.t("sousTotal")}: {currencyFormatter.format(getSousTotal())}</Text>
+        <Text style ={stylesPanier.panierText}>{i18n.t("tax")}: {currencyFormatter.format(CalculerTaxe(getSousTotal()))}</Text>
         <Text style ={stylesPanier.panierText}>{i18n.t("total")}: {getTotal()}</Text>
       </View>
-      <Button title={i18n.t("buttonCommand")} onPress={handleOrder} />
-    </View>
+      <Button title={i18n.t("buttonCommand")} color="#ff1493"  onPress={handleOrder} />
+          </>
+        )}
+      </View>
   );
 };
 
 const stylesPanier = StyleSheet.create({
   panierContainer: {
-    ///backgroundColor: "#98fb98",
     flex: 1,
   },
   titleContainer:{
@@ -217,8 +227,17 @@ const stylesPanier = StyleSheet.create({
     fontSize: 30,
     color: "#ff1493"
   },
+  emptyContainer:{
+    textAlign:'center',
+    backgroundColor:"#ffc0cb",
+    flex:1,
+    justifyContent: 'center', 
+    alignItems: 'center' 
+
+  },
   deleteIcon: {
     flexDirection: "row",
+    marginLeft:40 
   },
   label: {
     //textAlign:'center',
@@ -229,6 +248,7 @@ const stylesPanier = StyleSheet.create({
   containerPrice:{
     justifyContent: 'center',
     alignItems: 'flex-end',
+    //backgroundColor:"blue",
     //marginTop:100,
     marginLeft:10,
   },
@@ -239,7 +259,7 @@ const stylesPanier = StyleSheet.create({
     alignItems: "center",
     width:'100%',
     marginTop: 10,
-    padding: 10,
+    //padding: 10,
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 5,
@@ -248,11 +268,13 @@ const stylesPanier = StyleSheet.create({
   itemInfoContainer: {
     flex: 1,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    //justifyContent: 'space-between',
     alignItems: 'center',
-    //backgroundColor:"blue",
+    //backgroundColor:"red",
     //marginRight:10,
-    width:'100%'
+    width:'auto',
+    //maxWidth:220,
+
   },
   itemInfo: {
     flexDirection: "row",
@@ -261,12 +283,15 @@ const stylesPanier = StyleSheet.create({
 
   },
   itemDetails: {
+    //backgroundColor:"yellow",
+    width:200,
+    height:100
     //marginLeft: 10,
    // maxWidth: 170,
   },
   itemTotal: {
     marginTop: 5,
-    fontSize: 18,
+    fontSize: 15,
     fontWeight: 'bold',
   },
   button: {
@@ -284,6 +309,7 @@ const stylesPanier = StyleSheet.create({
  panierText:{
   fontSize: 18,
   fontWeight: 'bold',
+  padding:5,
  },
   buttonContainer: {
     flexDirection: "row",

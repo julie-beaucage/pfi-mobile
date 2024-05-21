@@ -1,6 +1,6 @@
 import { View , TextInput, Button} from 'react-native'
 import { useEffect, useState } from 'react';
-import dbPfi, { AddAdmin } from './bd';
+import dbPfi, { AddAdmin } from './Bd';
 
 export const ConnectionPage = ({ navigation }) => {
   const [nom, setNom] = useState("");
@@ -62,11 +62,11 @@ export const SignUpPage = ({ navigation }) => {
   const Register = (nom, mdp) => {
 
     if(Exists(nom)){ 
-      navigation.navigate("Connection");  // maybe show a msg to notify user
+      navigation.navigate("Connection");  
       return; 
     }
     Insert(nom, mdp);
-    navigation.navigate("Connection") // maybe show a msg to notify user
+    navigation.navigate("Connection") 
   }
 
   const Insert = (nom, mdp) => {

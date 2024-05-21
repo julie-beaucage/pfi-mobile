@@ -27,6 +27,18 @@ const en = {
     buttonContinu:"Continu Shopping",
     supprimer: "Delete",
     commander: "Order",
+    alerteTitre: "Delete Item",
+    alerteMessage: "Are you sure you want to delete this item from the cart?",
+    alerteCancer: "Cancel",
+    alerteYes: "Yes",
+    etatPanier:"Your cart is currently empty",
+
+    alerteTitre2: "Clear Cart",
+    alerteMessage2: "Are you sur you want to clear your cart?",
+    orderConfirmation: "Your order has been placed. The amount of {{totalAmount}}$ has been charged.",
+    snackbar: "SquishMallow {{nom}} has been added to your cart.",
+
+
 
 };
 const fr = {
@@ -50,7 +62,16 @@ const fr = {
     total: "Total",
     supprimer: "Supprimer",
     commander: "Commander",
-    bienvenue: "Bienvenue",
+    alerteTitre: "Supprimer l'article",
+    alerteMessage: "Êtes-vous sûr de vouloir supprimer cet article du panier ?",
+    alerteCancer: "Annuler",
+    alerteYes: "Oui",
+    etatPanier:"Votre panier est actuellement vide.",
+    alerteTitre2: "Vider le panier",
+    alerteMessage2: "Êtes-vous sûr de vouloir supprimer tous les articles du panier ?",
+    orderConfirmation: "Votre commande a été effectuée. Le montant de {{totalAmount}}$ a été prélevé.",
+
+    snackbar: "SquishMallow {{nom}} a été ajouté au panier",
 
 
 };

@@ -6,3 +6,5 @@ export const PanierContext = createContext();
 export function usePanierContext() {
     return useContext(PanierContext);
   }
+
+

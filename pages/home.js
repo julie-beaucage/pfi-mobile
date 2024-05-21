@@ -1,8 +1,9 @@
 import * as React from "react";
 import { Ionicons } from "@expo/vector-icons";
-import { useState, useEffect } from "react";
+import { useFonts } from "expo-font";
+//import { useFonts, MyCustomFont } from '@expo-google-fonts/my-custom-font';
+
 import {
-  TouchableOpacity,
   StyleSheet,
   View,
   Text,
@@ -12,24 +13,11 @@ import {
 } from "react-native";
 
 import i18n, { tabTraduction } from "../translagion";
-import * as Localization from "expo-localization";
 
 const HomeScreen = ({ navigation }) => {
-  /*
-  const [selectedLanguage, setSelectedLanguage] = useState(i18n.locale);
-
-  const changeLanguage = (language) => {
-    i18n.locale = language;
-    setSelectedLanguage(language);
-   // i18n.translations = { ...i18n.translations, [language]: tabTraduction[language] };
-    console.log(i18n.locale);
-    //setSelectedLanguage(language);
-  };
-
-  useEffect(() => {
-    i18n.locale = selectedLanguage;
-  }, [selectedLanguage]);
-*/
+  const [fontsLoaded] = useFonts({
+    "my-custom-font": require("../assets/fonts/test.ttf"),
+  });
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
@@ -66,13 +54,23 @@ const HomeScreen = ({ navigation }) => {
               style={{
                 fontSize: 30,
                 textAlign: "center",
+                color: "pink",
+                fontFamily: "my-custom-font",
+              }}
+            >
+              {i18n.t("shop")}
+            </Text>
+            <Text
+              style={{
+                fontSize: 30,
+                textAlign: "center",
                 marginBottom: 16,
                 color: "pink",
+                fontFamily: "my-custom-font",
               }}
             >
               {i18n.t("appName")}
             </Text>
-            <Text>{i18n.t("appName")}</Text>
             <Text style={{ color: "#90ee90", fontSize: 18 }}>
               {i18n.t("about")}
             </Text>
@@ -80,13 +78,30 @@ const HomeScreen = ({ navigation }) => {
             <Text style={{ color: "#90ee90", fontSize: 18 }}>
               {i18n.t("suiver")}
             </Text>
+            <Text style={{ color: "#90ee90", fontSize: 18 }}>
+              Julie Beaucage
+            </Text>
             <View style={styles.containerIcon}>
-              <Ionicons name="logo-facebook"size={24}color={"#90ee90"}margin={4}/>
-              <Ionicons name="logo-twitter" size={24}color={"#90ee90"}margin={4}/>
-              <Ionicons name="logo-instagram"size={24}color={"#90ee90"}margin={4} />
+              <Ionicons
+                name="logo-facebook"
+                size={24}
+                color={"#90ee90"}
+                margin={4}
+              />
+              <Ionicons
+                name="logo-twitter"
+                size={24}
+                color={"#90ee90"}
+                margin={4}
+              />
+              <Ionicons
+                name="logo-instagram"
+                size={24}
+                color={"#90ee90"}
+                margin={4}
+              />
             </View>
           </View>
-
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -94,13 +109,6 @@ const HomeScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  languageButton: {
-    backgroundColor: "white",
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    marginHorizontal: 10,
-    borderRadius: 5,
-  },
   containerIcon: {
     flexDirection: "row",
     alignItems: "center",

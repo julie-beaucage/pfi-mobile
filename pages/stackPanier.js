@@ -8,7 +8,7 @@ import i18n from "../translagion";
 
 const Stack = createNativeStackNavigator();
 
-const CartStack = () => {
+const CartStack = (navigation) => {
     return (
       <Stack.Navigator>
         <Stack.Screen name="Panier" component={CartScreen}
@@ -25,7 +25,7 @@ const CartStack = () => {
         <Stack.Screen
           name="OrderConfirmation"
           component={OrderConfirmationScreen}
-          options={{ title: "Confirmation de commande" }}
+          options={{ title: "Retour au Panier" }}
         />
       </Stack.Navigator>
     );

@@ -1,5 +1,5 @@
 import { Pressable, TextInput, View, FlatList, Text, Image } from "react-native";
-import dbPfi, { RemplirTableProduits } from './bd';
+import dbPfi, { RemplirTableProduits } from './Bd';
 import { useState, useEffect } from "react";
 import { LinearGradient } from 'expo-linear-gradient';
 

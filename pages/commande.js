@@ -1,8 +1,10 @@
 import React from "react";
 import { View, Text, StyleSheet, Button,Image } from "react-native";
+import { useState, useEffect, useContext } from "react";
 import i18n from "../translagion";
 
 const OrderConfirmationScreen = ({ route, navigation }) => {
+
   const { totalAmount } = route.params;
 
   return (
@@ -12,11 +14,11 @@ const OrderConfirmationScreen = ({ route, navigation }) => {
          style={styles.logo}
         />
       <Text style={styles.message}>
-        Votre commande a été effectuée. Le montant de {totalAmount}$ a été prélevé.
+        {i18n.t('orderConfirmation', { totalAmount })}
       </Text>
       <Button
-        title="Retour à la boutique"
-        onPress={() => navigation.navigate('CartScreen')}
+        title= {i18n.t('return')}
+        onPress={() => navigation.navigate('Boutique')}
       />
     </View>
   );
